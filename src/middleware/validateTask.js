@@ -1,5 +1,16 @@
 const { ApiError } = require('./errorHandler');
 
+/**
+ * Validate completed field as boolean
+ * @param {boolean|undefined} value - The completed value
+ * @returns {boolean|undefined} - Validated boolean or undefined
+ */
+function normalizeCompleted(value) {
+  if (value === undefined) return undefined;
+  if (typeof value === 'boolean') return value;
+  return null; // Invalid value
+}
+
 function validateCreateTask(req, res, next) {
   const { title, description, completed } = req.body;
 
@@ -11,8 +22,13 @@ function validateCreateTask(req, res, next) {
     return next(new ApiError(400, 'Description must be a string'));
   }
 
-  if (completed !== undefined && typeof completed !== 'boolean') {
-    return next(new ApiError(400, 'Completed must be a boolean'));
+  // Validate completed field
+  if (completed !== undefined) {
+    const normalized = normalizeCompleted(completed);
+    if (normalized === null) {
+      return next(new ApiError(400, 'Completed must be a boolean (true or false)'));
+    }
+    req.body.completed = normalized;
   }
 
   req.body.title = title.trim();
@@ -37,8 +53,13 @@ function validateUpdateTask(req, res, next) {
     return next(new ApiError(400, 'Description must be a string'));
   }
 
-  if (completed !== undefined && typeof completed !== 'boolean') {
-    return next(new ApiError(400, 'Completed must be a boolean'));
+  // Validate completed field
+  if (completed !== undefined) {
+    const normalized = normalizeCompleted(completed);
+    if (normalized === null) {
+      return next(new ApiError(400, 'Completed must be a boolean (true or false)'));
+    }
+    req.body.completed = normalized;
   }
 
   next();
