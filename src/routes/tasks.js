@@ -4,7 +4,6 @@ const { authenticate } = require('../middleware/auth');
 const {
   validateTaskId,
   listTasks,
-  getTask,
   createTask,
   updateTask,
   deleteTask,
@@ -19,9 +18,6 @@ router.param('id', validateTaskId);
 
 // GET /api/tasks - list all tasks, with optional sorting and pagination
 router.get('/', listTasks);
-
-// GET /api/tasks/:id - get single task
-router.get('/:id', getTask);
 
 // POST /api/tasks - create task
 router.post('/', validateCreateTask, createTask);

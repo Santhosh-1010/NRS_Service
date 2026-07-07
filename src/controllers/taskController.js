@@ -45,15 +45,6 @@ async function listTasks(req, res, next) {
   }
 }
 
-async function getTask(req, res, next) {
-  try {
-    const task = taskStore.getTaskById(req.params.id);
-    if (!task) return next(new ApiError(404, `Task with id ${req.params.id} not found`));
-    res.json(task);
-  } catch (error) {
-    next(error);
-  }
-}
 
 async function createTask(req, res, next) {
   try {
@@ -92,7 +83,6 @@ function handleTaskMethodNotAllowed(req, res, next) {
 module.exports = {
   validateTaskId,
   listTasks,
-  getTask,
   createTask,
   updateTask,
   deleteTask,
