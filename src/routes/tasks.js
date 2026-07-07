@@ -8,6 +8,15 @@ const router = express.Router();
 
 router.use(authenticate);
 
+const ID_PATTERN = /^\d{6}$/;
+
+router.param('id', (req, res, next, id) => {
+  if (!ID_PATTERN.test(id)) {
+    return next(new ApiError(400, `Invalid task id: ${id}`));
+  }
+  next();
+});
+
 // GET /api/tasks - list all tasks, with optional sorting and pagination
 router.get('/', (req, res) => {
   let tasks = [...taskStore.getAllTasks()];
@@ -67,5 +76,8 @@ router.delete('/:id', (req, res, next) => {
   if (!deleted) return next(new ApiError(404, `Task with id ${req.params.id} not found`));
   res.status(204).send();
 });
+
+router.all('/', (req, res, next) => next(new ApiError(405, `Method ${req.method} not allowed on /api/tasks`)));
+router.all('/:id', (req, res, next) => next(new ApiError(405, `Method ${req.method} not allowed on /api/tasks/:id`)));
 
 module.exports = router;

@@ -10,6 +10,14 @@ function notFoundHandler(req, res, next) {
 }
 
 function errorHandler(err, req, res, next) {
+  if (err.type === 'entity.parse.failed' || err instanceof SyntaxError) {
+    return res.status(400).json({ error: 'Malformed JSON in request body' });
+  }
+
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({ error: 'Request body too large' });
+  }
+
   const statusCode = err.statusCode || 500;
   const message = statusCode === 500 ? 'Internal server error' : err.message;
 

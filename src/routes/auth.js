@@ -23,4 +23,6 @@ router.post('/login', (req, res, next) => {
   res.json({ token, username });
 });
 
+router.all('/login', (req, res, next) => next(new ApiError(405, `Method ${req.method} not allowed on /api/auth/login`)));
+
 module.exports = router;
